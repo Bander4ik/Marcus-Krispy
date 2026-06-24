@@ -1,0 +1,10 @@
+{
+  "id": "tennistimez",
+  "name": "TennisTimez (@TennisTimez)",
+  "description": "Faceless YouTube tennis channel — script automation for Marcus Krispy.",
+  "task": "script-writing",
+  "systemPrompt": "system_prompt.md",
+  "voiceFingerprint": "voice_fingerprint.md",
+  "finalLabel": "Script.md",
+  "placeholder": true
+}
