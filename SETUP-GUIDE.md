@@ -8,6 +8,8 @@ The app does two things:
 1. **Script** — you give it a video **title**, it researches real sources on the web, and writes a finished **~2,000-word script** in your style (hook + closing call-to-action). It can also **fact-check** the script.
 2. **Competitors / Outliers** — it scans competitor YouTube channels every couple of days and shows you the videos that **massively over-performed** (great topic ideas). One click turns any of them into a script.
 
+> 📄 **Want to see what it produces first?** Open **`_sample_output_tennis.md`** in the project folder — it's a full example script the app generated.
+
 ---
 
 ## The integrations you'll need (and where to get them)
@@ -136,6 +138,33 @@ Done — you won't need to do this again. Keys are stored **only on your own com
 5. See one you like? Click **"Make script →"** — it drops that title straight into the **Script** tab, ready to generate.
 
 > 💡 That's the whole loop: the scanner finds a proven topic → one click writes you a script on it.
+
+---
+
+## Settings & options — what everything means
+
+**In the app's ⚙ Settings tab:**
+
+| Setting | What it is | Required? |
+|---|---|---|
+| **Anthropic API key** | Powers the script writing (Claude). | **Yes**, for the Script tab. Paid (~under $1/script). |
+| **YouTube Data API key** | Powers the Competitors topic finder. | Only if you use the Competitors tab. **Free.** |
+
+Both keys are stored **only on your computer** and shown masked (last 4 characters). Remove one anytime with its **Clear** button.
+
+**On the Competitors tab:**
+
+- **Channel list** — the competitor channels it scans. Add any with `@handle` or a channel URL; remove with the **×**. It comes pre-loaded with a starter set you can change freely.
+- **Scan now / auto-scan** — it re-scans automatically when you open the tab if it's been about **2 days**; **"Scan now"** forces a fresh scan anytime.
+- **"Outlier" / the `N× usual` badge** — a video that got far more views than that channel's *usual* (e.g. `8× usual` = eight times its normal). That's the signal a topic is hot. The list is ranked by that number, biggest first.
+
+**Advanced (optional — you can completely ignore these):**
+
+These live in the `.env.local` file and are just for tinkering — the app works perfectly without touching them.
+
+- **`SCRIPT_MODEL`** — swap the writing model. Default is `claude-sonnet-4-6`. You could set `claude-opus-4-8` for a stronger (and pricier) writer.
+- **`APP_PASSWORD`** — a login password. Only needed if you ever put the app online; not for normal use on your own computer.
+- Anything else in `.env.local.example` is for future features or for developers.
 
 ---
 
