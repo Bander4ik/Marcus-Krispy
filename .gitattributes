@@ -1,0 +1,5 @@
+# Keep Windows launchers as CRLF so they run correctly on Windows,
+# and Mac/Unix scripts as LF.
+*.bat text eol=crlf
+*.command text eol=lf
+*.sh text eol=lf
