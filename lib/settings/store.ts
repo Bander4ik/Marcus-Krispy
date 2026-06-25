@@ -23,6 +23,8 @@ interface SecretsFile {
   anthropicKey?: string;
   /** Optional saved override of the strong script model id (provider stays Anthropic). */
   scriptModel?: string;
+  /** YouTube Data API v3 key (free, Google Cloud) — powers the Competitors tab. */
+  youtubeDataApiKey?: string;
 }
 
 /** Directory name created under the home dir. */
@@ -103,4 +105,25 @@ export async function getSavedScriptModel(): Promise<string | undefined> {
   const secrets = await readSecrets();
   const model = secrets.scriptModel?.trim();
   return model || undefined;
+}
+
+/** Returns the saved YouTube Data API key, or undefined if none/blank/corrupt. */
+export async function getSavedYouTubeKey(): Promise<string | undefined> {
+  const secrets = await readSecrets();
+  const key = secrets.youtubeDataApiKey?.trim();
+  return key || undefined;
+}
+
+/** Saves (trims) the YouTube Data API key, preserving any other saved settings. */
+export async function saveYouTubeKey(key: string): Promise<void> {
+  const secrets = await readSecrets();
+  secrets.youtubeDataApiKey = key.trim();
+  await writeSecrets(secrets);
+}
+
+/** Clears the saved YouTube Data API key, preserving any other saved settings. */
+export async function clearYouTubeKey(): Promise<void> {
+  const secrets = await readSecrets();
+  delete secrets.youtubeDataApiKey;
+  await writeSecrets(secrets);
 }

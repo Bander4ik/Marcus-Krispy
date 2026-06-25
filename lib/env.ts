@@ -8,7 +8,7 @@
  * Settings tab, which writes it to ~/.marcus-krispy/secrets.json (see
  * lib/settings/store.ts). `resolveAnthropicKey()` applies that precedence.
  */
-import { getSavedAnthropicKey } from "@/lib/settings/store";
+import { getSavedAnthropicKey, getSavedYouTubeKey } from "@/lib/settings/store";
 
 /** Thrown when a required secret/config is missing for a feature. */
 export class MissingEnvError extends Error {
@@ -35,6 +35,21 @@ export async function resolveAnthropicKey(): Promise<string | undefined> {
 
 export function getGeminiKey(): string | undefined {
   return process.env.GEMINI_API_KEY?.trim() || undefined;
+}
+
+/** The YouTube Data API key from the ENVIRONMENT only (no saved-file fallback). */
+export function getYouTubeKey(): string | undefined {
+  return process.env.YOUTUBE_DATA_API_KEY?.trim() || undefined;
+}
+
+/**
+ * Resolves the YouTube Data API key with env-first precedence: the environment
+ * var (YOUTUBE_DATA_API_KEY, non-empty) wins; otherwise the key saved from the
+ * Settings tab (~/.marcus-krispy/secrets.json). Returns undefined when neither
+ * is present. Used by the Competitors tab's scan route.
+ */
+export async function resolveYouTubeKey(): Promise<string | undefined> {
+  return getYouTubeKey() ?? (await getSavedYouTubeKey());
 }
 
 /** Optional override of the strong script model id (provider stays Anthropic). */

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const TABS = [
   { href: "/script", label: "Script", soon: false },
-  { href: "/competitors", label: "Competitors", soon: true },
+  { href: "/competitors", label: "Competitors", soon: false },
   { href: "/analytics", label: "Analytics", soon: true },
   { href: "/settings", label: "⚙ Settings", soon: false },
 ];

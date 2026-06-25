@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createEventParser } from "@/lib/script/protocol";
 import type { SourceLink } from "@/lib/script/types";
@@ -59,9 +60,46 @@ function isMissingKeyError(message: string): boolean {
   return /ANTHROPIC_API_KEY/i.test(message);
 }
 
-export default function ScriptPage() {
+/**
+ * Reads the incoming `?title=` value (the Make-script handoff from the
+ * Competitors tab) from a URLSearchParams-like object and returns the trimmed
+ * title, or "" when absent/blank. Pure + exported so it's unit-testable without
+ * rendering the page.
+ */
+export function readTitleParam(params: {
+  get(name: string): string | null;
+}): string {
+  const raw = params.get("title");
+  return raw && raw.trim() ? raw : "";
+}
+
+/**
+ * The Script page reads an optional `?title=` query param so the Competitors tab
+ * can hand an outlier's title here via "Make script" (navigate to
+ * /script?title=<encoded>). We pre-fill the title box and focus it; the user
+ * still clicks Generate. `useSearchParams` requires a Suspense boundary (see the
+ * default export wrapper below).
+ */
+function ScriptPageInner() {
+  const searchParams = useSearchParams();
   const [title, setTitle] = useState("");
   const [channelId] = useState("tennistimez");
+  const titleRef = useRef<HTMLTextAreaElement | null>(null);
+  // Whether we've already applied an incoming ?title= (apply once on mount so we
+  // never clobber the user's edits if the param lingers in the URL).
+  const seededTitleRef = useRef(false);
+
+  // Pre-fill from ?title= once (Make-script handoff from the Competitors tab).
+  useEffect(() => {
+    if (seededTitleRef.current) return;
+    const incoming = readTitleParam(searchParams);
+    if (incoming) {
+      setTitle(incoming);
+      seededTitleRef.current = true;
+      // Focus the box so the user can tweak / hit Generate immediately.
+      titleRef.current?.focus();
+    }
+  }, [searchParams]);
   const [script, setScript] = useState("");
   const [outline, setOutline] = useState("");
   const [sources, setSources] = useState<SourceLink[]>([]);
@@ -342,6 +380,7 @@ export default function ScriptPage() {
         </label>
         <textarea
           id="title"
+          ref={titleRef}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g. 5 tennis brands robbing you blind (and 5 worth every penny)"
@@ -707,6 +746,19 @@ export default function ScriptPage() {
         />
       )}
     </div>
+  );
+}
+
+/**
+ * Default export — wraps the page in a Suspense boundary because
+ * `useSearchParams` (used to read the `?title=` handoff) requires one to keep
+ * the build's static-generation pass happy.
+ */
+export default function ScriptPage() {
+  return (
+    <Suspense fallback={null}>
+      <ScriptPageInner />
+    </Suspense>
   );
 }
 

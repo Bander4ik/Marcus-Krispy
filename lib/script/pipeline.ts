@@ -143,7 +143,16 @@ export class MultiStepEngine implements ScriptEngine {
     const { model } = pickModel("script-writing");
     const system = buildDraftSystem(prompts.step2Script, outline);
     // The blueprint is already in the system prompt; nudge the model to write.
-    const user = "Write the full script now, following the structure exactly.";
+    // The length + CTA reminders matter: with a compact outline the model can
+    // otherwise stop ~10% short and soften the closing CTA. A live test showed
+    // this reminder restores the full ~1900-word length and the explicit
+    // comment-inviting CTA, at no extra cost (it's just the draft user turn).
+    const user =
+      "Write the full script now, following the structure exactly. " +
+      "Hit the mandatory 1900-1950 word length (do not stop short). End with the " +
+      "natural closing CTA that invites the viewer to comment about the brand they " +
+      "overpaid for or feel most strongly about — woven into the narration as its " +
+      "final lines, with no label.";
     return streamAnthropic({ model, system, user });
   }
 
