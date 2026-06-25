@@ -1,48 +1,45 @@
-# Marcus Krispy — TennisTimez Studio
+# TennisTimez Script Studio
 
-Phase-1 scaffold for @TennisTimez (client: Marcus Krispy). A lean Next.js
-(App Router, TypeScript) app. Three tabs; only **Script** is live.
+A local web app for the **@TennisTimez** channel (client: Marcus Krispy). Give it a
+video title and it researches real sources on the web and writes a full
+**~2,000-word script** in your style (hook + closing CTA); it also surfaces
+trending **topic ideas** by scanning competitor channels for over-performers.
 
-## Tabs
+> **👉 Non-technical setup & usage: see [SETUP-GUIDE.md](SETUP-GUIDE.md)** —
+> step-by-step for Windows & Mac, you just double-click a launcher.
 
-| Tab | Route | Status |
-|---|---|---|
-| **Script** | `/script` | **Live** — title/idea in, full voiceover script out (streamed). |
-| Competitors / Outliers | `/competitors` | Seam only — YouTube Data API v3 (Phase 2). |
-| My Analytics | `/analytics` | Seam only — YouTube Analytics API + Google OAuth (Phase 3). |
+## Features
 
-## How it works (Script tab)
+| Tab | What it does |
+|---|---|
+| **Script** | Title → live web research → ~2,000-word script (hook + CTA), streamed. Optional 3-phase **fact-check**. |
+| **Competitors / Outliers** | Scans competitor channels, ranks the videos that beat that channel's usual views, one-click **"Make script"** into the Script tab. Auto-scans every ~2 days. |
+| My Analytics | Coming soon (your channel's retention). |
 
-`app/script/page.tsx` → `POST /api/script` → `getScriptEngine()`
-(`SingleShotEngine`) → `pickModel("script-writing")` → `streamAnthropic` with
-**`claude-sonnet-4-6`** + adaptive thinking, streamed back token-by-token.
+## Integrations (keys)
 
-- **Model is swappable** without code changes: set `SCRIPT_MODEL` in
-  `.env.local` (e.g. `claude-opus-4-8`). Provider stays Anthropic.
-- **Engine is swappable**: `SCRIPT_ENGINE=single-shot` (default) or `pipeline`
-  (Phase-2 stub). The pipeline seam exists but throws until built.
-- **Cheap mechanical steps** (future title cleanup, outlines, tags) run on
-  Gemini 2.5 Flash via `lib/models/gemini.ts` — wired but unused in Phase-1.
+Entered in the in-app **Settings** tab (or via `.env.local`). See SETUP-GUIDE.md for where to get each.
 
-The TennisTimez prompt is a clearly-marked **placeholder** in
-`channels/tennistimez/`. When Marcus delivers the real prompt, replace
-`system_prompt.md` — no code changes needed.
+- **Anthropic (Claude) API key** — required for writing scripts (~under $1/script).
+- **YouTube Data API key** — free, required for the Competitors tab.
 
-## Run locally (Mac)
+## Run (developers)
+
+From the project folder:
 
 ```sh
-cd "/Users/cupak/CascadeProjects/Marcus Krispy"
-cp .env.local.example .env.local        # then fill ANTHROPIC_API_KEY
 npm install
-npm run dev                             # http://localhost:3000 → /script
+npm run dev      # http://localhost:3000
 ```
 
-Production-style: `npm run build && npm run start`. Node 22+ (this machine
-runs Node 26 — fine). No Python required.
+Production: `npm run build && npm run start`. Requires **Node 20+**. No Python.
 
-**Do NOT run `npm audit fix --force`** — it downgrades Next and breaks the app.
+> **Do NOT run `npm audit fix --force`** — it downgrades Next and breaks the app.
 
-## Env vars
+## Tech
 
-Only `ANTHROPIC_API_KEY` is required for Phase-1. See `.env.local.example` for
-the rest (all optional or seam-only). Keys are read from env — never hardcoded.
+Next.js 16 (App Router) · TypeScript · Tailwind 4 · Anthropic SDK
+(`claude-sonnet-4-6`, server-side web search) · YouTube Data API v3. Keys are read
+from env or `~/.marcus-krispy/secrets.json` (0600) — never hardcoded. Engine logic
+under `lib/`, prompts under `channels/tennistimez/`. **268 tests** (`npm test`).
+For deeper architecture/decision notes see `STATUS.md`.

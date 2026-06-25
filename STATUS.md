@@ -51,7 +51,7 @@ Verified against the **installed `@anthropic-ai/sdk@0.105.0`** (and the claude-a
 ## How to run (exact commands)
 
 ```sh
-cd "/Users/cupak/CascadeProjects/Marcus Krispy"
+cd path/to/marcus-krispy                # the project folder
 cp .env.local.example .env.local        # optional — or set the key in the Settings tab
 npm install                             # already run during scaffold; safe to re-run
 npm run dev                             # http://localhost:3000 → redirects to /script
